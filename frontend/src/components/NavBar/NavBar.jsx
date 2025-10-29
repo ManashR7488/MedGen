@@ -3,13 +3,18 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import "./nav.css";
 import { AiOutlineSetting } from "react-icons/ai";
 import { useAuthStore } from "../../Store/useAuthStore";
+import { useCartStore } from "../../Store/useCartStore";
+import { useWishlistStore } from "../../Store/useWishlistStore";
 import { assets } from "../../assets/assets";
 import { FaChevronDown } from "react-icons/fa";
+import { FiShoppingCart, FiHeart } from "react-icons/fi";
 import logo from "/fav.png"
 
 const NavBar = () => {
   const navigate = useNavigate();
   const { user } = useAuthStore();
+  const { getCartItemCount, toggleCart } = useCartStore();
+  const { getWishlistCount } = useWishlistStore();
 
   const [showMenu, setShowMenu] = useState(false);
 
@@ -44,6 +49,33 @@ const NavBar = () => {
         </NavLink>
       </ul>
       <div className="flex items-center gap-4 px-2">
+        {/* Wishlist Icon - Show for logged in users only */}
+        {user && (
+          <NavLink to={"/store/wishlist"} className="indicator">
+            {getWishlistCount() > 0 && (
+              <span className="indicator-item badge badge-primary badge-sm">
+                {getWishlistCount()}
+              </span>
+            )}
+            <button className="btn btn-ghost btn-circle">
+              <FiHeart size={20} />
+            </button>
+          </NavLink>
+        )}
+
+        {/* Cart Icon - Show for all users */}
+        <button
+          onClick={toggleCart}
+          className="btn btn-ghost btn-circle indicator"
+        >
+          {getCartItemCount() > 0 && (
+            <span className="indicator-item badge badge-primary badge-sm">
+              {getCartItemCount()}
+            </span>
+          )}
+          <FiShoppingCart size={20} />
+        </button>
+
         {user ? (
           <div className="dropdown dropdown-end ">
             <div tabIndex={0} role="button" className="btn p-1">
